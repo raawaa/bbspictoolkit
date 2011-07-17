@@ -1,7 +1,0 @@
-D:\Projects\C#\BBSPicTools\src\BBSCore\bin\Debug\BBSCore.dll
-D:\Projects\C#\BBSPicTools\src\BBSCore\bin\Debug\BBSCore.pdb
-D:\Projects\C#\BBSPicTools\src\BBSCore\bin\Debug\Hammock.dll
-D:\Projects\C#\BBSPicTools\src\BBSCore\bin\Debug\Hammock.pdb
-D:\Projects\C#\BBSPicTools\src\BBSCore\obj\Debug\ResolveAssemblyReference.cache
-D:\Projects\C#\BBSPicTools\src\BBSCore\obj\Debug\BBSCore.dll
-D:\Projects\C#\BBSPicTools\src\BBSCore\obj\Debug\BBSCore.pdb
