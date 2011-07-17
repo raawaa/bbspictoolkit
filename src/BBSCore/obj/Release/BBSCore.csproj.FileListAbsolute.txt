@@ -1,0 +1,7 @@
+D:\Projects\C#\BBSPicTools\src\BBSCore\bin\Release\BBSCore.dll
+D:\Projects\C#\BBSPicTools\src\BBSCore\bin\Release\BBSCore.pdb
+D:\Projects\C#\BBSPicTools\src\BBSCore\bin\Release\Hammock.dll
+D:\Projects\C#\BBSPicTools\src\BBSCore\bin\Release\Hammock.pdb
+D:\Projects\C#\BBSPicTools\src\BBSCore\obj\Release\ResolveAssemblyReference.cache
+D:\Projects\C#\BBSPicTools\src\BBSCore\obj\Release\BBSCore.dll
+D:\Projects\C#\BBSPicTools\src\BBSCore\obj\Release\BBSCore.pdb
