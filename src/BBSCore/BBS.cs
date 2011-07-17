@@ -158,7 +158,7 @@ namespace BBSCore
             request.AddField("title", title);
             request.AddField("signature", "1");
             request.AddField("autocr", "on");
-            request.AddField("text", text);
+            request.AddField("text", text);            
            
             var response = client.Request(request);
 

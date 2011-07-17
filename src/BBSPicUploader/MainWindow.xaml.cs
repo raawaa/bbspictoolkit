@@ -144,12 +144,9 @@ namespace BBSPicUploader
 
         void OnFinished()
         {
-            var result = System.Windows.MessageBox.Show("上传发帖完毕，是否清楚所有数据？", "提示", MessageBoxButton.YesNo);
-
-            if (result == MessageBoxResult.Yes)
-            {
-                ClearAll();                
-            }
+            var result = System.Windows.MessageBox.Show("任务完成！");
+            
+            ClearAll();                            
 
             UnlockUI();
         }
