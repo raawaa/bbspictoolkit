@@ -31,14 +31,11 @@ namespace BBSPicUploader
         private BBSUploader _worker;
 
         private string _lastPic;
+        private bool _lastAutoPost;
 
         public MainWindow()
         {
-            InitializeComponent();
-
-            this.Title +=  " v" + Helper.GetVersion();
-
-            ClearAll();
+            InitializeComponent();                    
         }
 
         private void btnUpload_Click(object sender, RoutedEventArgs e)
@@ -64,7 +61,11 @@ namespace BBSPicUploader
             var preface = this.txtPreface.Text.Trim();
             var summery = this.txtSummary.Text.Trim();
 
-            _worker = new BBSUploader(board, title, _pics, preface, summery);
+            _lastAutoPost = this.chkPost.IsChecked ?? false;
+
+            ConfigManager.Config.AutoPost = _lastAutoPost;            
+
+            _worker = new BBSUploader(board, title, _pics, _lastAutoPost, preface, summery);
 
             _worker.OnProgressChange += new BBSUploader.ProgressHanlder(bbsuploader_OnProgressChange);
             _worker.OnStateChanged += new BBSUploader.StateHandler(bbsuploader_OnStateChanged);
@@ -91,7 +92,9 @@ namespace BBSPicUploader
             this.txtTitle.IsEnabled = false;
             this.btnNext.IsEnabled = false;
             this.btnPrev.IsEnabled = false;
-            this.btnClear.IsEnabled = false;  
+            this.btnClear.IsEnabled = false;
+            this.listPics.IsEnabled = false;
+            this.chkPost.IsEnabled = false;
         }
 
         void UnlockUI()
@@ -109,6 +112,8 @@ namespace BBSPicUploader
             this.btnNext.IsEnabled = true;
             this.btnPrev.IsEnabled = true;
             this.btnClear.IsEnabled = true;
+            this.listPics.IsEnabled = true;
+            this.chkPost.IsEnabled = true;
         }
 
         void ClearAll()
@@ -146,11 +151,19 @@ namespace BBSPicUploader
 
         void OnFinished()
         {
-            var result = System.Windows.MessageBox.Show("任务完成！");
+            var result = System.Windows.MessageBox.Show("上传完成！", "BBSPicUploader");            
             
             ClearAll();                            
 
             UnlockUI();
+
+            // 非自动发贴
+            if (!_lastAutoPost)
+            {
+                var previewWindow = new Preview(_worker.Board, _worker.Title, _worker.FullContent);
+
+                previewWindow.Show();
+            }
         }
 
 
@@ -178,7 +191,7 @@ namespace BBSPicUploader
 
             openFileDialog.Multiselect = true;
 
-            openFileDialog.Filter = "图像文件(*.jpg;*.gif;*.png;*.jpeg)|*.jpg;*.gif;*.png;*.jpeg|所有文件(*.*)|*.*";
+            openFileDialog.Filter = "图像文件(*.jpg;*.gif;*.png;*.bmp;*.jpeg)|*.jpg;*.gif;*.png;*.jpeg;*.bmp|所有文件(*.*)|*.*";
 
             var result = openFileDialog.ShowDialog() ?? false;
 
@@ -388,6 +401,17 @@ namespace BBSPicUploader
         private void MenuItem_AutoUpdate_Click(object sender, RoutedEventArgs e)
         {
             Helper.LunchAutoUpdate();
+        }
+
+        private void Window_ContentRendered(object sender, EventArgs e)
+        {
+            this.Title += " v" + Helper.GetVersion();
+
+            ClearAll();
+
+            this.chkPost.IsChecked = ConfigManager.Config.AutoPost;
+
+            this.cmbBoard.ItemsSource = ConfigManager.Boards;
         }        
     }
 }

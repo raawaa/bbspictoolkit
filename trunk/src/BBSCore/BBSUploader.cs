@@ -12,7 +12,7 @@ namespace BBSCore
 {
     public class BBSUploader : WorkerBase, IWorker
     {
-        public const int MaxThreads = 8;
+        public const int MaxThreads = 4;
 
         public delegate void ProgressHanlder(object sender, ProgressEventArgs e);
         public delegate void StateHandler(object sender, StateEventArgs e);
@@ -68,8 +68,11 @@ namespace BBSCore
         public string Title { get; private set; }
         public string Preface { get; private set; }
         public string Summmery { get; private set; }
+        public bool AutoPost {get;private set;}
+
+        public string FullContent { get; private set; }
        
-        public BBSUploader(string board, string title, IList<PicInfo> pics, string preface = null, string summery = null)
+        public BBSUploader(string board, string title, IList<PicInfo> pics, bool autoPost,string preface = null, string summery = null)
         {
             _state = UploaderState.Waiting;
 
@@ -77,6 +80,7 @@ namespace BBSCore
             Title = title;
             Preface = preface;
             Summmery = summery;
+            AutoPost = autoPost;
 
             _list = new List<PicInfo>();
             _queue = new Queue<PicInfo>();
@@ -95,9 +99,14 @@ namespace BBSCore
 
             Upload();
 
-            this.State = UploaderState.Posting;
+            BuildFullContent();
 
-            Post();
+            if (AutoPost)
+            {
+                this.State = UploaderState.Posting;
+
+                Post();
+            }
 
             this.State = UploaderState.Finished;
 
@@ -138,6 +147,8 @@ namespace BBSCore
 
                     thread = new Thread(new ThreadStart(worker.Work));
 
+                    thread.Name = "Uploader Work " + picInfo.FullFilename;
+
                     thread.IsBackground = true;
 
                     threads[i] = thread;
@@ -161,7 +172,10 @@ namespace BBSCore
 
             picInfo.Url = worker.Url;
 
-            Finished++;
+            lock (this)
+            {
+                Finished++;
+            }
 
             if (OnProgressChange != null)
             {
@@ -173,9 +187,9 @@ namespace BBSCore
             Console.WriteLine("Thread{0} Finished! url = {1}", index, picInfo.Url);
         }
 
-        void Post()
+        void BuildFullContent()
         {
-            var sb = new StringBuilder();
+             var sb = new StringBuilder();
 
             if (!string.IsNullOrEmpty(Preface))
             {
@@ -201,14 +215,18 @@ namespace BBSCore
                 sb.AppendLine("\r\n" + Summmery);
             }
 
-            var text = sb.ToString();
+            FullContent = sb.ToString();
+                      
+        }
 
+        void Post()
+        {
             if (_list.Count > 0)
             {
                 Title += " #" + _list.Count + "P";
             }
 
-            BBS.Post(Board, Title, text);
+            BBS.Post(Board, Title, FullContent);
         }        
     }
 }

@@ -18,12 +18,21 @@ namespace BBSPicUploader
         {
             var config = ConfigManager.LoadConfig();
 
+            ConfigManager.LoadBoards();
+            
+            BBSCore.BBS.Init(Helper.GetVersion(), config.BBSconfig);
+
             var ts = DateTime.Now - config.LastUpdateTime;
 
             if (ts.TotalDays > 1)
             {
                 Helper.LunchAutoUpdate();
             }
+        }
+
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            ConfigManager.SaveConfig();
         }
     }
 }
