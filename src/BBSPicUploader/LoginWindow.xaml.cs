@@ -31,12 +31,9 @@ namespace BBSPicUploader
             this.Title += " v" + Helper.GetVersion();
 
             this.Loaded += new RoutedEventHandler(LoginWindow_Loaded);
+           
+            BBSCore.BBS.Init(Helper.GetVersion());
 
-            //BBSPicUploader.BBS.Init(1);
-
-            BBSCore.BBS.Init(1);
-
-          //  this.cmbUsername.Focus();
         }
 
         void LoginWindow_Loaded(object sender, RoutedEventArgs e)
@@ -127,6 +124,18 @@ namespace BBSPicUploader
             if (e.Key == Key.Enter)
             {
                 TryLogin();
+            }
+        }
+
+        private void Window_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F5)
+            {
+                var mainWindow = new MainWindow();
+
+                mainWindow.Show();
+
+                this.Close();
             }
         }
     }

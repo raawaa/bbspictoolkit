@@ -13,10 +13,8 @@ using System.Net;
 namespace BBSCore
 {
     public static class BBS
-    {
-        public const int Generation = 3;
-        public const int CoreVersion = 1;
-        public static int UIVersion { get; private set; }
+    {       
+        public static string Version { get; private set; }
 
         public const string Authority = "http://bbs.sjtu.edu.cn/";
         public const string Referer = Authority;
@@ -33,14 +31,13 @@ namespace BBSCore
         {
             get
             {
-                return string.Format("by BBSPicUploader v{0}.{1}.0.{2}",
-                    Generation, CoreVersion, UIVersion);
+                return string.Format("by BBSPicUploader v{0}", Version);
             }
         }
 
-        public static void Init(int uiVersion)
+        public static void Init(string version)
         {
-            UIVersion = uiVersion;
+            Version = version;
         }
 
         public static void TestRegex()
