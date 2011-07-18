@@ -81,16 +81,27 @@ namespace BBSPicUploader.Update
                 directoryInfp.Create();
             }
 
+            this.lblBytes.Content = "正在下载更新文件...";
+
             var filename = directoryInfp.FullName + "\\" + updateFileUrl.Substring(updateFileUrl.LastIndexOf("/") + 1);
 
             _webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(webClient_DownloadProgressChanged);
-            _webClient.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(webClient_DownloadFileCompleted);
+            _webClient.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(webClient_DownloadFileCompleted);            
             _webClient.DownloadFileAsync(new Uri(updateFileUrl), filename);            
         }
 
         void webClient_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            UpdateFile();
+            if (e.Cancelled == true || e.Error != null)
+            {
+                MessageBox.Show("下载失败！");
+
+                this.Close();
+            }
+            else
+            {
+                UpdateFile();
+            }
         }
 
         private void UpdateFile()
