@@ -13,7 +13,9 @@ using System.Net;
 namespace BBSCore
 {
     public static class BBS
-    {       
+    {
+        public static BBSConfig Config { get; private set; }
+    
         public static string Version { get; private set; }
 
         public const string Authority = "http://bbs.sjtu.edu.cn/";
@@ -21,13 +23,13 @@ namespace BBSCore
         public const string UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.55 Safari/535.1";
         public const string LoginPath = "bbslogin";
         public const string UploadPath = "bbsdoupload";
-        public const string SendPath = "bbssnd";
+        public const string SendPath = "bbssnd";    
 
-        static Regex UploadedUrlRegex = new Regex(@"\&data=(http\:\/\/bbs\.sjtu\.edu\.cn\/file\/[\w\.\/]+)");
+        private static Regex UploadedUrlRegex = new Regex(@"\&data=(http\:\/\/bbs\.sjtu\.edu\.cn\/file\/[\w\.\/]+)");
 
-        static NameValueCollection _cookies;
+        private static NameValueCollection _cookies;
 
-        static string Signature
+        private static string Signature
         {
             get
             {
@@ -35,16 +37,11 @@ namespace BBSCore
             }
         }
 
-        public static void Init(string version)
+        public static void Init(string version, BBSConfig config)
         {
             Version = version;
-        }
 
-        public static void TestRegex()
-        {
-            var match = UploadedUrlRegex.Match("FlashVars:\"text=复制&data=http://bbs.sjtu.edu.cn/file/test/1310878958210850.jpg\"};var attributes={id:\"clipboard\",style:\"margin:0 0 -5px 10px;\"};swfobject.embedSWF(\"/file/bbs/clip.swf\"");
-
-            Console.WriteLine(match.Groups[1].Value);
+            Config = config;
         }
 
         /// <summary>
@@ -95,22 +92,23 @@ namespace BBSCore
         /// <summary>
         /// 上传文件到指定的板面。
         /// </summary>
-        /// <param name="filepath">要上传的文件路径</param>
+        /// <param name="stream">要上传的文件的流</param>
+        /// <param name="ext">文件后缀名</param>
         /// <param name="board">板面</param>
         /// <param name="star">星标|1～5（默认为1）</param>
         /// <param name="description">描述（默认为空）</param>        
         /// <param name="live">存活天数（默认180天）</param>
         /// <returns></returns>
-        public static string Upload(string filepath, string board, int star = 1, string description = "", int live = 180)
+        public static string Upload(Stream stream, string ext, string board, int star = 1, string description = "", int live = 180)
         {
             var client = GetNewClient();
             var request = GetNewRequest(UploadPath, WebMethod.Post);
             
             request.AddHeader("Referer", "http://bbs.sjtu.edu.cn/bbsupload?board=" + board);
 
-            var fi = new FileInfo(filepath);
+            //var fi = new FileInfo(filepath);
 
-            request.AddFile("up", fi.Name, fi.FullName);
+            request.AddFile("up", "pic" + ext, stream);
 
             request.AddField("MAX_FILE_SIZE", "1048577");
             request.AddField("board", board);
@@ -120,11 +118,7 @@ namespace BBSCore
 
             var response = client.Request(request);
 
-            var content = response.GetGBContent();
-
-            //var content = response.Content;
-
-          //  Console.WriteLine(content);
+            var content = response.GetGBContent();         
 
             var match = UploadedUrlRegex.Match(content);
 
@@ -134,7 +128,7 @@ namespace BBSCore
             }
 
             return null;
-        }
+        }               
 
         /// <summary>
         /// 发表一个帖子。

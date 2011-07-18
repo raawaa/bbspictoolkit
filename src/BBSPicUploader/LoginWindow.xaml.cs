@@ -30,10 +30,7 @@ namespace BBSPicUploader
 
             this.Title += " v" + Helper.GetVersion();
 
-            this.Loaded += new RoutedEventHandler(LoginWindow_Loaded);
-           
-            BBSCore.BBS.Init(Helper.GetVersion());
-
+            this.Loaded += new RoutedEventHandler(LoginWindow_Loaded);                      
         }
 
         void LoginWindow_Loaded(object sender, RoutedEventArgs e)
