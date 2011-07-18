@@ -70,6 +70,8 @@ namespace BBSPicUploader.Update
         private void DownloadUpdateFile(string updateFileUrl)
         {
             _webClient = new WebClient();
+            _webClient.Proxy = WebRequest.DefaultWebProxy; 
+
             var tempDir = AppDomain.CurrentDomain.BaseDirectory + "temp";
 
             var directoryInfp = new DirectoryInfo(tempDir);
@@ -110,6 +112,7 @@ namespace BBSPicUploader.Update
         private void DownloadUpdateInfo()
         {
             _webClient = new WebClient();
+            _webClient.Proxy = GlobalProxySelection.GetEmptyWebProxy();
 
             _webClient.DownloadStringAsync(new Uri(Global.UpdateUrl));
             _webClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(_webClient_DownloadUpdateInfoCompleted);

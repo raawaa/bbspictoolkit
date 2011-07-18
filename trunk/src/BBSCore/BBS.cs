@@ -8,6 +8,7 @@ using Hammock.Web;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Net;
 
 namespace BBSCore
 {
@@ -175,7 +176,8 @@ namespace BBSCore
 
             client.Authority = Authority;
             client.Encoding = Encoding.GetEncoding("GB2312");           
-            client.Timeout = new TimeSpan(0, 5, 0);            
+            client.Timeout = new TimeSpan(0, 5, 0);
+            client.Proxy = string.Empty;
 
             return client;
         }
@@ -186,7 +188,8 @@ namespace BBSCore
             request.Path = path;
             request.Method = method;
             request.Encoding = Encoding.GetEncoding("GB2312"); // ("GBK");          
-            request.UserAgent = UserAgent;                       
+            request.UserAgent = UserAgent;
+            request.Proxy = string.Empty;
 
             if (_cookies != null)
             {
