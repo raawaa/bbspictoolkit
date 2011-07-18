@@ -29,10 +29,11 @@ namespace BBSPicUploader.Update
         private WebClient _webClient;
         private Thread _thread;
         private string _updateFilename;
+        private bool _isForece;
 
         public MainWindow()
         {
-            InitializeComponent();                        
+            InitializeComponent();       
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
@@ -71,7 +72,7 @@ namespace BBSPicUploader.Update
 
             if (updateInfo.Version != Global.AppVer)
             {
-                var result = MessageBox.Show("发现新版本" + updateInfo.Version +  "，是否下载？", "自动更新", MessageBoxButton.OKCancel);
+                var result = MessageBox.Show("发现新版本" + updateInfo.Version + "，是否下载？", "自动更新", MessageBoxButton.OKCancel);
 
                 if (result == MessageBoxResult.OK)
                 {
@@ -143,7 +144,7 @@ namespace BBSPicUploader.Update
 
                 UpdateFile();
             }
-        }
+        }        
 
         private void UpdateFile()
         {

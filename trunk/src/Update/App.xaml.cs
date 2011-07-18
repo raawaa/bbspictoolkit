@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 using System.Reflection;
+using System.IO;
 
 namespace BBSPicUploader.Update
 {
@@ -19,7 +20,7 @@ namespace BBSPicUploader.Update
             {
                 try
                 {
-                    var ass = Assembly.LoadFile(AppDomain.CurrentDomain.BaseDirectory + Global.MainAppName + ".exe");
+                    var ass = Assembly.Load(File.ReadAllBytes(AppDomain.CurrentDomain.BaseDirectory + Global.MainAppName + ".exe"));
                     Global.AppVer = ass.GetName().Version.ToString();                              
                 }
                 catch
