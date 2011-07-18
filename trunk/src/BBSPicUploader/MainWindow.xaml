@@ -3,7 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="BBSPicUploader" Height="720" Width="880" WindowStartupLocation="CenterScreen">
     <Grid>
-        <GroupBox Header="基本" Height="185" HorizontalAlignment="Left" Margin="4,4,0,0" Name="groupBasic" VerticalAlignment="Top" Width="850">
+        <Menu IsMainMenu="True">
+            <MenuItem Header="文件">
+                <MenuItem Header="退出" Click="MenuItem_Exit_Click"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="帮助">
+                <MenuItem Header="自动更新" Click="MenuItem_AutoUpdate_Click"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <GroupBox Header="基本" Height="185" HorizontalAlignment="Left" Margin="4,24,0,0" Name="groupBasic" VerticalAlignment="Top" Width="850">
             <Grid>
                 <Label Content="板面：" Height="28" HorizontalAlignment="Left" Margin="0,12,0,0" Name="lblBoard" VerticalAlignment="Top" Grid.Column="1" />
                 <ComboBox Height="23" HorizontalAlignment="Left" Margin="47,12,0,0" Name="cmbBoard" VerticalAlignment="Top" Width="120" Grid.Column="1" IsEditable="True" />
@@ -15,7 +23,7 @@
                 <TextBox Height="50" Margin="47,102,12,0" Name="txtSummary" VerticalAlignment="Top" Grid.Column="1" ToolTip="会显示在正文的最后" />
             </Grid>
         </GroupBox>
-        <GroupBox Header="图片" Height="400" HorizontalAlignment="Left" Margin="4,200,0,0" Name="groupPic" VerticalAlignment="Top" Width="850">
+        <GroupBox Header="图片" Height="400" HorizontalAlignment="Left" Margin="4,210,0,0" Name="groupPic" VerticalAlignment="Top" Width="850">
             <Grid>
                 <ListBox Height="338" Margin="12,4,372,0" Name="listPics" VerticalAlignment="Top" SelectionChanged="listPics_SelectionChanged" />
                 <Button Content="添加" Height="23" HorizontalAlignment="Left" Margin="12,348,0,0" Name="btnAdd" VerticalAlignment="Top" Width="60" Click="btnAdd_Click" />
@@ -34,12 +42,12 @@
                 <Label Content="" Height="24" HorizontalAlignment="Left" Margin="646,348,0,0" Name="lblIndexAndCount" VerticalAlignment="Top" Width="180" />
             </Grid>
         </GroupBox>
-        <GroupBox Header="状态" Height="65" HorizontalAlignment="Left" Margin="4,610,0,0" Name="groupState" VerticalAlignment="Top" Width="850" >
+        <GroupBox Header="状态" Height="65" HorizontalAlignment="Left" Margin="4,615,0,0" Name="groupState" VerticalAlignment="Top" Width="850" >
             <Grid>
                 <Button Content="上传发帖" Height="23" HorizontalAlignment="Left" Margin="12,10,0,0" Name="btnUpload" VerticalAlignment="Top" Width="60" Click="btnUpload_Click" />
                 <ProgressBar Height="20" Margin="78,12,198,0" Name="progressBar1" VerticalAlignment="Top" />
                 <Label Content="" Height="28" HorizontalAlignment="Right" Margin="0,8,12,0" Name="lblProgress" VerticalAlignment="Top" Width="180" />
             </Grid>
-        </GroupBox>
+        </GroupBox>        
     </Grid>
 </Window>

@@ -15,6 +15,9 @@ using System.Net;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
+using System.Threading;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace BBSPicUploader.Update
 {
@@ -24,6 +27,8 @@ namespace BBSPicUploader.Update
     public partial class MainWindow : Window
     {
         private WebClient _webClient;
+        private Thread _thread;
+        private string _updateFilename;
 
         public MainWindow()
         {
@@ -42,6 +47,23 @@ namespace BBSPicUploader.Update
             DownloadUpdateInfo();            
         }
 
+        private void DownloadUpdateInfo()
+        {
+            CleanThread();
+
+            _thread = new Thread(new ThreadStart(new Action(delegate()
+            {
+                _webClient = new WebClient();
+                _webClient.Proxy = WebRequest.DefaultWebProxy;
+                _webClient.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
+                _webClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(_webClient_DownloadUpdateInfoCompleted);
+                _webClient.DownloadStringAsync(new Uri(Global.UpdateUrl));
+            })));
+
+            _thread.IsBackground = true;
+            _thread.Start();
+        }
+
         private void CheckVersion(string xml)
         {
             var updateInfo = ParseUpdateInfo(xml);
@@ -49,7 +71,7 @@ namespace BBSPicUploader.Update
 
             if (updateInfo.Version != Global.AppVer)
             {
-                var result = MessageBox.Show("发现新版本，是否下载？", "自动更新", MessageBoxButton.OKCancel);
+                var result = MessageBox.Show("发现新版本" + updateInfo.Version +  "，是否下载？", "自动更新", MessageBoxButton.OKCancel);
 
                 if (result == MessageBoxResult.OK)
                 {
@@ -63,15 +85,13 @@ namespace BBSPicUploader.Update
             }
             else
             {
+                MessageBox.Show("当前程序为最新版本" + updateInfo.Version, "自动更新");
                 this.Close();
             }
         }
 
         private void DownloadUpdateFile(string updateFileUrl)
-        {
-            _webClient = new WebClient();
-            _webClient.Proxy = WebRequest.DefaultWebProxy; 
-
+        {            
             var tempDir = AppDomain.CurrentDomain.BaseDirectory + "temp";
 
             var directoryInfp = new DirectoryInfo(tempDir);
@@ -83,23 +103,44 @@ namespace BBSPicUploader.Update
 
             this.lblBytes.Content = "正在下载更新文件...";
 
-            var filename = directoryInfp.FullName + "\\" + updateFileUrl.Substring(updateFileUrl.LastIndexOf("/") + 1);
+            _updateFilename = directoryInfp.FullName + "\\" + updateFileUrl.Substring(updateFileUrl.LastIndexOf("/") + 1);
 
-            _webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(webClient_DownloadProgressChanged);
-            _webClient.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(webClient_DownloadFileCompleted);            
-            _webClient.DownloadFileAsync(new Uri(updateFileUrl), filename);            
+            CleanThread();
+
+            _thread = new Thread(new ThreadStart(new Action(delegate()
+            {
+                _webClient = new WebClient();
+                _webClient.Proxy = WebRequest.DefaultWebProxy;
+
+                _webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(webClient_DownloadProgressChanged);
+                _webClient.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(webClient_DownloadFileCompleted);
+                _webClient.DownloadFileAsync(new Uri(updateFileUrl), _updateFilename);            
+            })));
+
+            _thread.IsBackground = true;
+            _thread.Start();
         }
 
-        void webClient_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        void webClient_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            this.Dispatcher.Invoke(new Action<AsyncCompletedEventArgs>(OnUpdateFileDownloaded), e);
+        }
+
+        void OnUpdateFileDownloaded(AsyncCompletedEventArgs e)
         {
             if (e.Cancelled == true || e.Error != null)
             {
-                MessageBox.Show("下载失败！");
+                MessageBox.Show("下载失败！", "自动更新");
+
+                _webClient.Dispose();
 
                 this.Close();
             }
             else
             {
+                _webClient.Dispose();
+                _webClient = null;
+
                 UpdateFile();
             }
         }
@@ -107,37 +148,82 @@ namespace BBSPicUploader.Update
         private void UpdateFile()
         {
             if (!CloseMainApp()) return;
+
+            this.lblBytes.Content = "正在更新文件...";
+
+            UnZip(_updateFilename, AppDomain.CurrentDomain.BaseDirectory);
+
+            MessageBox.Show("更新已完成！", "自动更新");
+
+            Process.Start("BBSPicUploader.exe");
+
+            Close();
+        }
+
+        static void UnZip(string zipFile, string destFolder)
+        {
+            Shell32.ShellClass sc = new Shell32.ShellClass();
+            Shell32.Folder SrcFolder = sc.NameSpace(zipFile);
+            Shell32.Folder DestFolder = sc.NameSpace(destFolder);
+            Shell32.FolderItems items = SrcFolder.Items();
+            DestFolder.CopyHere(items, 20);
         }
 
         private bool CloseMainApp()
         {
+            System.Diagnostics.Process[] processes = System.Diagnostics.Process.GetProcessesByName(Global.MainAppName);
+
+            if (processes.Length > 0)
+            {
+                var result = MessageBox.Show("检测到主程序正在运行，是否关闭主程序？", "自动更新", MessageBoxButton.OKCancel);
+
+                if (result == MessageBoxResult.OK)
+                {
+                    foreach (var process in processes)
+                    {
+                        process.Kill();
+                    }
+
+                    return true;
+                }
+                else
+                {                    
+                    this.Close();
+                    return false;
+                }
+            }
+
             return true;
         }
 
         void webClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {           
+        {
+            this.Dispatcher.Invoke(new Action<DownloadProgressChangedEventArgs>(updateDownloadProgress), e);
+        }
+
+        void updateDownloadProgress(DownloadProgressChangedEventArgs e)
+        {
             this.progressBar1.Value = e.ProgressPercentage;
             this.lblBytes.Content = string.Format("{0}KB/{1}KB", (e.BytesReceived / 1024.0).ToString("0.0"), (e.TotalBytesToReceive / 1024.0).ToString("0.0"));
         }
 
-        private void DownloadUpdateInfo()
+
+
+        private void CleanThread()
         {
-            _webClient = new WebClient();
-            _webClient.Proxy = GlobalProxySelection.GetEmptyWebProxy();
-
-            _webClient.DownloadStringAsync(new Uri(Global.UpdateUrl));
-            _webClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(_webClient_DownloadUpdateInfoCompleted);
-
-            //var xml = webClient.DownloadString(Global.UpdateUrl);
-
-            //return xml;
-
-            
+            if (_thread != null)
+            {
+                _thread.Abort();
+                _thread = null;
+            }
         }
 
         void _webClient_DownloadUpdateInfoCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
-            CheckVersion(e.Result);
+            _webClient.Dispose();
+            _webClient = null;
+
+            this.Dispatcher.Invoke(new Action<string>(CheckVersion), e.Result);            
         }
 
         private UpdateInfo ParseUpdateInfo(string xml)
@@ -163,7 +249,15 @@ namespace BBSPicUploader.Update
                 this.Close();
             }
 
-            _webClient.Dispose();
+            try
+            {
+                _webClient.Dispose();
+                _webClient = null;
+            }
+            catch
+            {
+
+            }
 
             this.Close();
         }
