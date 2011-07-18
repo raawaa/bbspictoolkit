@@ -22,7 +22,9 @@
                 <Button Content="添加目录" Height="23" HorizontalAlignment="Left" Margin="78,348,0,0" Name="btnAddFolder" VerticalAlignment="Top" Width="60" Click="btnAddFolder_Click" />
                 <Button Content="移除" Height="23" HorizontalAlignment="Right" Margin="0,348,438,0" Name="btnRemove" VerticalAlignment="Top" Width="60" Click="btnRemove_Click" />
                 <Button Content="清空" Height="23" HorizontalAlignment="Right" Margin="0,348,372,0" Name="btnClear" VerticalAlignment="Top" Width="60" Click="btnClear_Click" />
-                <Image Height="240" Margin="0,6,12,0" Name="imgPreview" Stretch="Uniform" VerticalAlignment="Top" HorizontalAlignment="Right" Width="354" />
+                <Grid Margin="472,6,6,131" Width="360" Height="240">
+                    <Image Height="240" Name="imgPreview" Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Width="360" />
+                </Grid>
                 <Label Content="描述:" Height="28" HorizontalAlignment="Left" Margin="472,261,0,0" Name="lblDescription" VerticalAlignment="Top"  ToolTip="会显示在上传区里"/>
                 <TextBox Height="23" Margin="0,263,12,0" Name="txtDescription" ToolTip="会显示在上传区里" VerticalAlignment="Top" HorizontalAlignment="Right" Width="311" />
                 <Label Content="说明:" Height="28" HorizontalAlignment="Left" Margin="472,292,0,0" Name="lblText" VerticalAlignment="Top" ToolTip="会显示在正文图片下方" />
