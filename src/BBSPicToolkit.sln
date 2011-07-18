@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BBSPicUploader", "BBSPicUpl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BBSCore", "BBSCore\BBSCore.csproj", "{D124E3FC-9318-4882-8677-CC2E82150B9B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Update", "Update\Update.csproj", "{9D9C21F2-C251-488E-8802-FEDD7288C0B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,16 @@ Global
 		{D124E3FC-9318-4882-8677-CC2E82150B9B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{D124E3FC-9318-4882-8677-CC2E82150B9B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{D124E3FC-9318-4882-8677-CC2E82150B9B}.Release|x86.ActiveCfg = Release|Any CPU
+		{9D9C21F2-C251-488E-8802-FEDD7288C0B9}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{9D9C21F2-C251-488E-8802-FEDD7288C0B9}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{9D9C21F2-C251-488E-8802-FEDD7288C0B9}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{9D9C21F2-C251-488E-8802-FEDD7288C0B9}.Debug|x86.ActiveCfg = Debug|x86
+		{9D9C21F2-C251-488E-8802-FEDD7288C0B9}.Debug|x86.Build.0 = Debug|x86
+		{9D9C21F2-C251-488E-8802-FEDD7288C0B9}.Release|Any CPU.ActiveCfg = Release|x86
+		{9D9C21F2-C251-488E-8802-FEDD7288C0B9}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{9D9C21F2-C251-488E-8802-FEDD7288C0B9}.Release|Mixed Platforms.Build.0 = Release|x86
+		{9D9C21F2-C251-488E-8802-FEDD7288C0B9}.Release|x86.ActiveCfg = Release|x86
+		{9D9C21F2-C251-488E-8802-FEDD7288C0B9}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

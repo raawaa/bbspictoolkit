@@ -50,14 +50,30 @@ namespace BBSPicUploader
 
         private void TryLogin()
         {
+            var username = this.cmbUsername.Text.Trim();
+            var password = this.txtPassword.Password;
+
+            if (string.IsNullOrEmpty(username))
+            {
+                MessageBox.Show("请输入帐号");
+                this.cmbUsername.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(password))
+            {
+                MessageBox.Show("请输入密码");
+                this.txtPassword.Focus();
+                return;
+            }
+            
+
             if (_loginThread != null)
             {
                 _loginThread.Abort();
                 _loginThread = null;
             }
 
-            var username = this.cmbUsername.Text;
-            var password = this.txtPassword.Password;
+            
 
             _loginWorker = new LoginWorker(username, password);
             _loginWorker.OnFinished += new LoginWorker.FinishHanlder(_loginWorker_FinishEvent);
