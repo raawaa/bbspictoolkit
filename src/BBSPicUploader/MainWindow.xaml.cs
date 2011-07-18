@@ -36,6 +36,8 @@ namespace BBSPicUploader
         {
             InitializeComponent();
 
+            this.Title +=  " v" + Helper.GetVersion();
+
             ClearAll();
         }
 
@@ -372,5 +374,20 @@ namespace BBSPicUploader
 
             this.listPics.SelectedIndex--;
         }
+
+        private void MenuItem_Exit_Click(object sender, RoutedEventArgs e)
+        {
+            var result = System.Windows.MessageBox.Show("是否要退出程序？", "退出", MessageBoxButton.OKCancel);
+
+            if (result == MessageBoxResult.OK)
+            {
+                this.Close();
+            }
+        }
+
+        private void MenuItem_AutoUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            Helper.LunchAutoUpdate();
+        }        
     }
 }

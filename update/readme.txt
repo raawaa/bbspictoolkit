@@ -1,0 +1,1 @@
+当自动更新无法完成的时候，可以先删除BBSPicUploader.exe文件，再运行Update.exe。

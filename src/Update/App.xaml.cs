@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Windows;
+using System.Reflection;
 
 namespace BBSPicUploader.Update
 {
@@ -14,9 +15,22 @@ namespace BBSPicUploader.Update
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            if (e.Args.Length != 0)
+            if (e.Args.Length == 0)
             {
-                Global.AppVer = "3.0.0.1";
+                try
+                {
+                    var ass = Assembly.LoadFile(AppDomain.CurrentDomain.BaseDirectory + Global.MainAppName + ".exe");
+                    Global.AppVer = ass.GetName().Version.ToString();                              
+                }
+                catch
+                {
+                    Global.AppVer = "0.0.0.0";
+                }
+                
+            }
+            else
+            {
+                Global.AppVer = e.Args[0];
             }
         }
     }

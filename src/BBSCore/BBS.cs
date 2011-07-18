@@ -15,7 +15,7 @@ namespace BBSCore
     public static class BBS
     {
         public const int Generation = 3;
-        public const int CoreVersion = 0;
+        public const int CoreVersion = 1;
         public static int UIVersion { get; private set; }
 
         public const string Authority = "http://bbs.sjtu.edu.cn/";
@@ -33,7 +33,7 @@ namespace BBSCore
         {
             get
             {
-                return string.Format("by BBSPicUploader v{0}.{1}.{2}",
+                return string.Format("by BBSPicUploader v{0}.{1}.0.{2}",
                     Generation, CoreVersion, UIVersion);
             }
         }

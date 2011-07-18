@@ -28,6 +28,7 @@ namespace BBSPicUploader
         {           
             InitializeComponent();
 
+            this.Title += " v" + Helper.GetVersion();
 
             this.Loaded += new RoutedEventHandler(LoginWindow_Loaded);
 
