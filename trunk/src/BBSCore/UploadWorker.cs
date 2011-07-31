@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Drawing;
 
 namespace BBSCore
 {
@@ -28,14 +29,42 @@ namespace BBSCore
             var fi = new FileInfo(Filepath);
 
             var isBitmap = fi.Extension.ToLower() == ".bmp";
-            var isGif = fi.Extension.ToLower() == ".gif";
+            var isGifOrPng = fi.Extension.ToLower() == ".gif" || fi.Extension.ToLower() == ".png";
 
             var ext = fi.Extension;
 
             Stream stream = null;
+            
+            var convert = false;
 
-            // 如果不是gif，以及尺寸超过上传上限，或者开启强制转换，或者后缀为bmp 则进行转换
-            if (fi.Length > MaxFileSize && !isGif || !BBS.Config.UseRawSize || isBitmap)
+            //var image = Image.FromFile(Filepath);
+
+            //var propItem = image.GetPropertyItem(20624);
+
+            //if (propItem != null)
+            //{ 
+            //    propItem = 
+            //}
+
+
+
+            // 如果超过最大文件尺寸或者是BMP，则进行转换
+            if (fi.Length > MaxFileSize || isBitmap)
+            {
+                convert = true;
+            }
+            // 如果是gif和PNG，没有超过尺寸，不转换
+            else if(isGifOrPng)
+            {
+                convert = false;
+            }
+            // jpg，没有超过尺寸，如果没有指定不转换，则默认转换。
+            else if (!BBS.Config.UseRawSize)
+            {
+                convert = true;
+            }            
+
+            if (convert)
             {
                 stream = ImageHelper.Resize(fi.FullName, BBS.Config.ThumbWidth, System.Windows.Media.BitmapScalingMode.Fant);
 

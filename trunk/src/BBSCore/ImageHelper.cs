@@ -10,7 +10,7 @@ namespace BBSCore
 {
     public class ImageHelper
     {
-        private static object lockObject = new object();
+        private static readonly object lockObject = new object();
 
         public static Stream Resize(string photoPath, int maxWidth, BitmapScalingMode scalingMode)
         {
@@ -22,6 +22,7 @@ namespace BBSCore
 
                 var photoDecoder = BitmapDecoder.Create(new Uri(photoPath), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None);
                 var photo = photoDecoder.Frames[0];
+                var metaInfo = photo.Metadata;
 
                 double width = photo.PixelWidth;
                 double height = photo.PixelHeight;
@@ -47,7 +48,7 @@ namespace BBSCore
                     (int)width, (int)height, 96, 96, PixelFormats.Default);
                 targetContext.Close();
                 target.Render(targetVisual);
-                var targetFrame = BitmapFrame.Create(target);
+                var targetFrame = BitmapFrame.Create(target, photo.Thumbnail, (BitmapMetadata)metaInfo.Clone(), photo.ColorContexts);
 
                 var memoryStream = new MemoryStream();
 
@@ -64,7 +65,13 @@ namespace BBSCore
         }
 
         private void Test()
-        {            
+        {
+            var stream = (MemoryStream)Resize(@"d:\pic.png", 960, BitmapScalingMode.Fant);
+
+            using (var fs = new FileStream(@"d:\t.jpg", FileMode.Create))
+            {
+                stream.WriteTo(fs);
+            }
         }
     }
 }

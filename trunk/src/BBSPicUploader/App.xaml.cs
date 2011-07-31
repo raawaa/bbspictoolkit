@@ -24,7 +24,7 @@ namespace BBSPicUploader
 
             var ts = DateTime.Now - config.LastUpdateTime;
 
-            if (ts.TotalDays > 1)
+            if (ts.TotalDays > 7)
             {
                 Helper.LunchAutoUpdate();
             }

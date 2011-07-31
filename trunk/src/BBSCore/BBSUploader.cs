@@ -12,6 +12,8 @@ namespace BBSCore
 {
     public class BBSUploader : WorkerBase, IWorker
     {
+        private static readonly object lockObj = new object();
+
         public const int MaxThreads = 4;
 
         public delegate void ProgressHanlder(object sender, ProgressEventArgs e);
@@ -164,27 +166,27 @@ namespace BBSCore
 
         void worker_OnFinished(object sender, EventArgs e)
         {
-            var index = threads.ToList().IndexOf(Thread.CurrentThread);
-
-            UploadWorker worker = sender as UploadWorker;
-
-            var picInfo = _list.FirstOrDefault(p => p.FullFilename == worker.Filepath);
-
-            picInfo.Url = worker.Url;
-
-            lock (this)
+            lock (lockObj)
             {
+                var index = threads.ToList().IndexOf(Thread.CurrentThread);
+
+                UploadWorker worker = sender as UploadWorker;
+
+                var picInfo = _list.FirstOrDefault(p => p.FullFilename == worker.Filepath);
+
+                picInfo.Url = worker.Url;
+
                 Finished++;
+
+                if (OnProgressChange != null)
+                {
+                    OnProgressChange.Invoke(this, new ProgressEventArgs(this.Progress));
+                }
+
+                worker.OnFinished -= worker_OnFinished;
+
+                Console.WriteLine("Thread{0} Finished! url = {1}", index, picInfo.Url);
             }
-
-            if (OnProgressChange != null)
-            {
-                OnProgressChange.Invoke(this, new ProgressEventArgs(this.Progress));
-            }
-
-            worker.OnFinished -= worker_OnFinished;
-
-            Console.WriteLine("Thread{0} Finished! url = {1}", index, picInfo.Url);
         }
 
         void BuildFullContent()
