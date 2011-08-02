@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using BBSCore;
 using System.Threading;
+using BBSCore.Extensions;
 
 namespace BBSPicUploader
 {
@@ -23,6 +24,8 @@ namespace BBSPicUploader
     {
         Thread _loginThread;
         LoginWorker _loginWorker;
+        string _username;
+        string _password;
 
         public LoginWindow()
         {           
@@ -36,6 +39,8 @@ namespace BBSPicUploader
         void LoginWindow_Loaded(object sender, RoutedEventArgs e)
         {
             this.cmbUsername.Focus();
+            this.cmbUsername.Text = ConfigManager.Config.Username;
+            this.txtPassword.Password = ConfigManager.Config.Password.Decode();
         }
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
@@ -45,16 +50,16 @@ namespace BBSPicUploader
 
         private void TryLogin()
         {
-            var username = this.cmbUsername.Text.Trim();
-            var password = this.txtPassword.Password;
+            _username = this.cmbUsername.Text.Trim();
+            _password = this.txtPassword.Password;
 
-            if (string.IsNullOrEmpty(username))
+            if (string.IsNullOrEmpty(_username))
             {
                 MessageBox.Show("请输入帐号");
                 this.cmbUsername.Focus();
                 return;
             }
-            if (string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(_password))
             {
                 MessageBox.Show("请输入密码");
                 this.txtPassword.Focus();
@@ -66,11 +71,9 @@ namespace BBSPicUploader
             {
                 _loginThread.Abort();
                 _loginThread = null;
-            }
+            }            
 
-            
-
-            _loginWorker = new LoginWorker(username, password);
+            _loginWorker = new LoginWorker(_username, _password);
             _loginWorker.OnFinished += new LoginWorker.FinishHanlder(_loginWorker_FinishEvent);
 
             _loginThread = new Thread(new ThreadStart(_loginWorker.Work));
@@ -99,20 +102,26 @@ namespace BBSPicUploader
         {
             if (isLogined)
             {
-               this.btnLogin.Content = "已登录";
+                this.btnLogin.Content = "已登录";
 
-               var mainWindow = new MainWindow();
+                ConfigManager.Config.Username = _username;
+                ConfigManager.Config.Password = _password.Encode();
 
-               mainWindow.Show();
+                ConfigManager.SaveConfig();
 
-               this.Close();
+                var mainWindow = new MainWindow();
+
+                mainWindow.Show();
+
+                this.Close();
             }
             else
             {
                 this.cmbUsername.IsReadOnly = false;
                 this.txtPassword.IsEnabled = true;
-               this.btnLogin.IsEnabled = true;
-               MessageBox.Show("登录失败！");
+                this.btnLogin.IsEnabled = true;
+                this.btnLogin.Content = "登录";
+                MessageBox.Show("登录失败！");
             }
         }
 
