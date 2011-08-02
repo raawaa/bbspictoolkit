@@ -18,5 +18,9 @@ namespace BBSPicUploader
         public virtual DateTime LastUpdateTime { get; set; }
 
         public virtual bool AutoPost { get; set; }
+
+        public virtual string Username { get; set; }
+
+        public virtual string Password { get; set; }
     }
 }

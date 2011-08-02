@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="BBS.cs" />
     <Compile Include="BBSUploader.cs" />
+    <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="PostWorker.cs" />
     <Compile Include="Event\ProgressEventArgs.cs" />
     <Compile Include="Event\StateEventArgs.cs" />

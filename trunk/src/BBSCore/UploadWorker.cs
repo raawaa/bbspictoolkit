@@ -10,7 +10,7 @@ namespace BBSCore
     public class UploadWorker : WorkerBase, IWorker
     {
 
-        public const int MaxFileSize = 1000 * 1000 * 1000;
+        public const int MaxFileSize = 1000 * 1000;
 
         public string Board { get; private set; }
         public string Filepath { get; private set; }
