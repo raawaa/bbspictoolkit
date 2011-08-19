@@ -16,6 +16,8 @@ namespace BBSPicUploader.Update
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            Global.IsDailyCheck = false;
+
             if (e.Args.Length == 0)
             {
                 try
@@ -26,12 +28,19 @@ namespace BBSPicUploader.Update
                 catch
                 {
                     Global.AppVer = "0.0.0.0";
-                }
-                
+                }                
             }
             else
             {
                 Global.AppVer = e.Args[0];
+
+                if (e.Args.Length == 2)
+                {
+                    if (e.Args[1] == "-f")
+                    {
+                        Global.IsDailyCheck = true;
+                    }
+                }
             }
         }
     }
