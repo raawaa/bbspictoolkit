@@ -33,7 +33,12 @@ namespace BBSPicUploader.Update
 
         public MainWindow()
         {
-            InitializeComponent();       
+            InitializeComponent();
+
+            if (Global.IsDailyCheck)
+            {
+                this.Hide();
+            }
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)

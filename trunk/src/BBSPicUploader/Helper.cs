@@ -8,10 +8,16 @@ namespace BBSPicUploader
 {
     public class Helper
     {
-        public static void LunchAutoUpdate()
+        public static void LunchAutoUpdate(bool isDailyCheck = true)
         {
-            var ver = GetVersion();
-            var psi = new ProcessStartInfo(AppDomain.CurrentDomain.BaseDirectory + "Update.exe", ver);
+            var args = GetVersion();
+
+            //if (!isDailyCheck)
+            //{
+            //    args += " -f";
+            //}
+
+            var psi = new ProcessStartInfo(AppDomain.CurrentDomain.BaseDirectory + "Update.exe", args);
 
             Process.Start(psi);
 

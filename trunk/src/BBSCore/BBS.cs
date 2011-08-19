@@ -142,7 +142,8 @@ namespace BBSCore
             var client = GetNewClient();
             var request = GetNewRequest(SendPath, WebMethod.Post);
 
-            text += string.Format("\r\n Posted {0} {1}", Signature, DateTime.Now.ToString());
+            text += "\r\n";
+            text += string.Format("Posted {0} {1}", Signature, DateTime.Now.ToString());
 
             request.AddHeader("Referer", "http://bbs.sjtu.edu.cn/bbspst?board=" + board);
 
