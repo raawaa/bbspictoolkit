@@ -9,6 +9,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Net;
+using System.Threading;
 
 namespace BBSCore
 {
@@ -18,9 +19,9 @@ namespace BBSCore
     
         public static string Version { get; private set; }
 
-        public const string Authority = "http://bbs.sjtu.edu.cn/";
+        public const string Authority = "https://bbs.sjtu.edu.cn/";
         public const string Referer = Authority;
-        public const string UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.55 Safari/535.1";
+        public const string UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7";
         public const string LoginPath = "bbslogin";
         public const string UploadPath = "bbsdoupload";
         public const string SendPath = "bbssnd";    
@@ -101,34 +102,51 @@ namespace BBSCore
         /// <returns></returns>
         public static string Upload(Stream stream, string ext, string board, int star = 1, string description = "", int live = 180)
         {
-            var client = GetNewClient();
-            var request = GetNewRequest(UploadPath, WebMethod.Post);
-            
-            request.AddHeader("Referer", "http://bbs.sjtu.edu.cn/bbsupload?board=" + board);
-
-            //var fi = new FileInfo(filepath);
-
-            request.AddFile("up", "pic" + ext, stream);
-
-            request.AddField("MAX_FILE_SIZE", "1048577");
-            request.AddField("board", board);
-            request.AddField("level", (star - 1).ToString());
-            request.AddField("live", live.ToString());
-            request.AddField("exp", description + " " + Signature);
-
-            var response = client.Request(request);
-
-            var content = response.GetGBContent();         
-
-            var match = UploadedUrlRegex.Match(content);
-
-            if (match.Groups.Count == 2)
+            var retry = 3;
+            while (retry-- > 0)
             {
-                return match.Groups[1].Value;
-            }
+                Thread.Sleep(500);
+                try
+                {
+                    var client = GetNewClient();
+                    var request = GetNewRequest(UploadPath, WebMethod.Post);
 
+                    request.AddHeader("Referer", "https://bbs.sjtu.edu.cn/bbsupload?board=" + board);
+
+                    //var fi = new FileInfo(filepath);
+                    stream.Position = 0;
+                    request.AddFile("up", "pic" + ext, stream);
+
+                    request.AddField("MAX_FILE_SIZE", "1048577");
+                    request.AddField("board", board);
+                    request.AddField("level", (star - 1).ToString());
+                    request.AddField("live", live.ToString());
+                    request.AddField("exp", description + " " + Signature);
+
+                    var response = client.Request(request);
+
+                    var content = response.GetGBContent();
+
+                    if (content == null)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        var match = UploadedUrlRegex.Match(content);
+
+                        if (match.Groups.Count == 2)
+                        {
+                            return match.Groups[1].Value;
+                        }
+                    }
+                }
+                catch(Exception e) {
+                    Console.WriteLine(e.Message + e.StackTrace);
+                }
+            }
             return null;
-        }               
+        }
 
         /// <summary>
         /// 发表一个帖子。

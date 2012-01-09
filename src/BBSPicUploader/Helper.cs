@@ -12,17 +12,16 @@ namespace BBSPicUploader
         {
             var args = GetVersion();
 
-            //if (!isDailyCheck)
-            //{
-            //    args += " -f";
-            //}
-
-            var psi = new ProcessStartInfo(AppDomain.CurrentDomain.BaseDirectory + "Update.exe", args);
-
-            Process.Start(psi);
-
-            ConfigManager.Config.LastUpdateTime = DateTime.Now;
-            ConfigManager.SaveConfig();
+            try
+            {
+                var psi = new ProcessStartInfo(AppDomain.CurrentDomain.BaseDirectory + "Update.exe", args);
+                Process.Start(psi);
+            }
+            finally
+            {
+                ConfigManager.Config.LastUpdateTime = DateTime.Now;
+                ConfigManager.SaveConfig();
+            }
         }
 
         public static string GetVersion()
