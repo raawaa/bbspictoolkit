@@ -22,12 +22,12 @@ namespace BBSPicUploader
             
             BBSCore.BBS.Init(Helper.GetVersion(), config.BBSconfig);
 
-            var ts = DateTime.Now - config.LastUpdateTime;
+            //var ts = DateTime.Now - config.LastUpdateTime;
 
-            if (ts.TotalDays > 7)
-            {
-                Helper.LunchAutoUpdate();
-            }
+            //if (ts.TotalDays > 7)
+            //{
+            //    Helper.LunchAutoUpdate();
+            //}
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)

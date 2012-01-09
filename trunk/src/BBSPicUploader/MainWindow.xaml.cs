@@ -35,7 +35,7 @@ namespace BBSPicUploader
 
         public MainWindow()
         {
-            InitializeComponent();                    
+            InitializeComponent();
         }
 
         private void btnUpload_Click(object sender, RoutedEventArgs e)
@@ -400,7 +400,7 @@ namespace BBSPicUploader
 
         private void MenuItem_AutoUpdate_Click(object sender, RoutedEventArgs e)
         {
-            Helper.LunchAutoUpdate();
+            //Helper.LunchAutoUpdate();
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
@@ -412,6 +412,11 @@ namespace BBSPicUploader
             this.chkPost.IsChecked = ConfigManager.Config.AutoPost;
 
             this.cmbBoard.ItemsSource = ConfigManager.Boards;
+        }
+
+        private void MenuItem_About_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.MessageBox.Show("Hello from xxfflower");
         }        
     }
 }

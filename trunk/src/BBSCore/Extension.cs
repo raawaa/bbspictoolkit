@@ -20,9 +20,9 @@ namespace BBSCore
                     content = sr.ReadToEnd();
                 }
             }
-            catch
+            catch(Exception e)
             {
-                
+                Console.WriteLine("Message:" + e.Message + "\r\nStackTrace:" + e.StackTrace);
             }
 
             return content;

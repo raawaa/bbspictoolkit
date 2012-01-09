@@ -8,7 +8,7 @@
                 <MenuItem Header="退出" Click="MenuItem_Exit_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="帮助">
-                <MenuItem Header="检查更新" Click="MenuItem_AutoUpdate_Click"></MenuItem>
+                <MenuItem Header="关于" Click="MenuItem_About_Click"></MenuItem>
             </MenuItem>
         </Menu>
         <GroupBox Header="基本" Height="185" HorizontalAlignment="Left" Margin="4,24,0,0" Name="groupBasic" VerticalAlignment="Top" Width="850">

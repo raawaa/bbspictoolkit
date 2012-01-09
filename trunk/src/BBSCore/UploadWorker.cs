@@ -77,7 +77,6 @@ namespace BBSCore
 
             using (stream)
             {
-                stream.Position = 0;
                 Url = BBS.Upload(stream, ext, Board, description: Description);
             }
 

@@ -50,7 +50,7 @@ namespace BBSCore
                 target.Render(targetVisual);
                 var targetFrame = BitmapFrame.Create(target, photo.Thumbnail, (BitmapMetadata)metaInfo.Clone(), photo.ColorContexts);
 
-                var memoryStream = new MemoryStream();
+                var memoryStream = new MemoryStream();                
 
                 var targetEncoder = new JpegBitmapEncoder();
                 targetEncoder.Frames.Add(targetFrame);
@@ -66,7 +66,7 @@ namespace BBSCore
 
         private void Test()
         {
-            var stream = (MemoryStream)Resize(@"d:\pic.png", 960, BitmapScalingMode.Fant);
+            var stream = (MemoryStream)Resize(@"E:\Images\2011\8\8-27 微距\jpeg\s\DSC_3088.jpg", 960, BitmapScalingMode.Fant);
 
             using (var fs = new FileStream(@"d:\t.jpg", FileMode.Create))
             {
